@@ -5,6 +5,7 @@ Shared Foundry configuration for Uniteum repos, consumed as a git submodule.
 ## What's in here
 
 - `foundry.toml` — canonical Foundry config shared across all `uniteum/*` repos
+- `.vscode/` — shared VS Code workspace settings
 
 ### Compiler settings
 
@@ -33,6 +34,7 @@ environment variables required for standard usage.
 ```bash
 git submodule add git@github.com:uniteum/solidity.git solidity
 ln -s solidity/foundry.toml foundry.toml
+ln -s solidity/.vscode .vscode
 ```
 
 ### Cloning a repo that uses this submodule
