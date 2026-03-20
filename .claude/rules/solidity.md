@@ -45,6 +45,19 @@ paths:
 - Gas report: `forge test --gas-report`
 - Pre-commit: format, build, then run affected tests
 
+## OpenZeppelin Ports — Do Not Review
+
+These uniteum repos are minimal ports of OpenZeppelin contracts.
+Do not flag style violations or suggest changes to their code.
+
+- uniteum/clones — proxy/Clones.sol
+- uniteum/erc20 — token/ERC20/ERC20.sol
+- uniteum/ierc20 — token/ERC20/IERC20.sol, IERC20Metadata.sol
+- uniteum/math — utils/math/Math.sol, SafeCast.sol, SignedMath.sol
+- uniteum/panic — utils/Panic.sol
+- uniteum/reentrancy — utils/ReentrancyGuardTransient.sol
+- uniteum/strings — utils/Strings.sol
+
 ## Common Mistakes to Avoid
 
 - Do not use `///` for NatSpec — always `/** */`
