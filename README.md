@@ -1,10 +1,12 @@
 # solidity
 
-Shared Foundry configuration for Uniteum repos, consumed as a git submodule.
+Shared Foundry configuration and deployment scripts for Uniteum repos, consumed
+as a git submodule.
 
 ## What's in here
 
 - `foundry.toml` — canonical Foundry config shared across all `uniteum/*` repos
+- `script/Proto.s.sol` — base deployment script for CREATE2 protofactory contracts
 - `.vscode/` — shared VS Code workspace settings
 - `.claude/rules/solidity.md` — Claude Code rules for Solidity development
 - `.claude/settings.json` — shared Claude Code permissions (Foundry tool access)
@@ -30,6 +32,73 @@ Select a profile with `FOUNDRY_PROFILE=ci forge test`.
 Endpoints are keyed by chain ID and point to free public RPCs. No secrets or
 environment variables required for standard usage.
 
+## ProtoScript
+
+`ProtoScript` is an abstract Forge script that deploys a contract via
+[Nick's CREATE2 deployer](https://github.com/Arachnid/deterministic-deployment-proxy)
+(`0x4e59b44847b379578588920cA78FbF26c0B4956C`) with salt `0x0`. This gives every
+protofactory contract a deterministic address that is the same on every chain.
+
+Subclasses override two functions:
+
+```solidity
+function name() internal pure override returns (string memory);
+function creationCode() internal pure override returns (bytes memory);
+```
+
+### Example
+
+```solidity
+import {MyContract} from "../src/MyContract.sol";
+import {ProtoScript} from "solidity/script/Proto.s.sol";
+
+contract MyContractProto is ProtoScript {
+    function name() internal pure override returns (string memory) {
+        return "MyContractProto";
+    }
+
+    function creationCode() internal pure override returns (bytes memory) {
+        return type(MyContract).creationCode;
+    }
+}
+```
+
+### Environment variables
+
+ProtoScript requires two environment variables:
+
+| Variable | Purpose | Example |
+|----------|---------|---------|
+| `env`    | Deployment environment label (e.g. `prod`, `staging`, `dev`) | `prod` |
+| `chain`  | Chain name or identifier, used to organize output files | `arbitrum` |
+
+### Running a deployment
+
+```bash
+env=prod chain=arbitrum forge script script/MyContractProto.s.sol \
+    -f 42161 --private-key $tx_key --broadcast
+```
+
+### The `io/` directory
+
+Each deployment writes the predicted contract address to a JSON file under:
+
+```
+io/$env/$chain/$name.json
+```
+
+For example, running `MyContractProto` with `env=prod` and `chain=arbitrum`
+writes to `io/prod/arbitrum/MyContractProto.json`:
+
+```json
+"0x1234...abcd"
+```
+
+This provides a persistent, per-environment, per-chain record of deployed
+addresses that scripts and tests can read back. The `io/` directory is local to
+each consumer repo (not inside the solidity submodule). `foundry.toml` already
+grants read-write `fs_permissions` to `./io/`.
+
 ## Usage
 
 ### Adding to a repo
@@ -42,6 +111,17 @@ mkdir -p .claude/rules
 ln -s ../solidity/.claude/settings.json .claude/settings.json
 ln -s ../../solidity/.claude/rules/solidity.md .claude/rules/solidity.md
 ```
+
+Add a remapping for the solidity submodule so Forge can resolve imports from it:
+
+```
+# remappings.txt
+solidity/=solidity/
+```
+
+Each repo's `remappings.txt` will also include entries for its own dependencies
+(e.g. `forge-std/=lib/forge-std/src/`). The `solidity/=solidity/` remapping is
+the only one needed to use `ProtoScript` and any future shared scripts.
 
 ### Cloning a repo that uses this submodule
 

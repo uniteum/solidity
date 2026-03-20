@@ -1,14 +1,15 @@
-# AGENTS.md — Shared Solidity Configuration
+# AGENTS.md — Shared Solidity Infrastructure
 
 > AI instructions for the `uniteum/solidity` submodule.
 
 ## What This Repo Is
 
-This is a **shared configuration submodule** consumed by all `uniteum/*` Solidity repos.
-It is not a standalone project — it has no `src/`, no contracts, no tests.
+This is a **shared infrastructure submodule** consumed by all `uniteum/*` Solidity repos.
+It provides configuration and base scripts but has no `src/` contracts or tests of its own.
 
 Contents:
 - `foundry.toml` — canonical Foundry config
+- `script/Proto.s.sol` — abstract base script for CREATE2 protofactory deployments
 - `.vscode/` — shared VS Code workspace settings
 - `.claude/settings.json` — shared Claude Code permissions
 - `.claude/rules/solidity.md` — Claude Code rules for Solidity development
@@ -23,6 +24,7 @@ repo/
 ├── solidity/              ← this submodule
 ├── foundry.toml           → solidity/foundry.toml
 ├── .vscode                → solidity/.vscode
+├── remappings.txt         ← per-repo (includes solidity/=solidity/)
 ├── .claude/
 │   ├── settings.json      → ../solidity/.claude/settings.json
 │   └── rules/
@@ -67,7 +69,7 @@ should symlink it. If yes:
 
 ## Do Not
 
-- Add contracts, tests, or scripts — this is config only
+- Add project-specific contracts or tests — this repo provides shared infrastructure only
 - Add secrets, API keys, or private RPC endpoints
 - Break backward compatibility in foundry.toml without coordinating across consumer repos
 - Modify files expecting them to only affect one repo — changes propagate everywhere
