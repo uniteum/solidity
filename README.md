@@ -1,4 +1,4 @@
-# config
+# solidity
 
 Shared Foundry configuration for Uniteum repos, consumed as a git submodule.
 
@@ -6,13 +6,33 @@ Shared Foundry configuration for Uniteum repos, consumed as a git submodule.
 
 - `foundry.toml` — canonical Foundry config shared across all `uniteum/*` repos
 
+### Compiler settings
+
+Solc 0.8.30, Cancun EVM, optimizer enabled (200 runs, via IR).
+
+### Profiles
+
+| Profile   | Invariant runs | Depth |
+|-----------|---------------|-------|
+| `default` | 256           | 500   |
+| `ci`      | 512           | 1,000 |
+| `quick`   | 32            | 64    |
+| `deep`    | 1,024         | 2,000 |
+
+Select a profile with `FOUNDRY_PROFILE=ci forge test`.
+
+### RPC endpoints
+
+Endpoints are keyed by chain ID and point to free public RPCs. No secrets or
+environment variables required for standard usage.
+
 ## Usage
 
 ### Adding to a repo
 
 ```bash
-git submodule add git@github.com:uniteum/config.git config
-echo "FOUNDRY_CONFIG=config/foundry.toml" >> .env
+git submodule add git@github.com:uniteum/solidity.git solidity
+ln -s solidity/foundry.toml foundry.toml
 ```
 
 ### Cloning a repo that uses this submodule
@@ -30,23 +50,8 @@ git submodule update --init
 ### Updating to the latest config
 
 ```bash
-git submodule update --remote config
+git submodule update --remote solidity
 ```
-
-## RPC endpoints
-
-`foundry.toml` defines RPC endpoints using environment variable interpolation:
-
-```toml
-[rpc_endpoints]
-mainnet = "${RPC_MAINNET}"
-sepolia = "${RPC_SEPOLIA}"
-```
-
-The actual URLs are never stored here. Each repo's `.env` contains only the
-`FOUNDRY_CONFIG` pointer (safe to commit); the `RPC_*` variables are expected
-to arrive via whatever secret delivery mechanism you use (shell profile, CI
-secrets manager, 1Password CLI, etc.).
 
 ## Per-repo overrides
 
@@ -54,8 +59,7 @@ If a repo needs to diverge from the shared config, use `FOUNDRY_*` environment
 variables to override individual settings without forking `foundry.toml`:
 
 ```bash
-# .env (committed, repo-specific)
-FOUNDRY_CONFIG=config/foundry.toml
+# .env (repo-specific)
 FOUNDRY_OUT=out/custom
 ```
 
