@@ -28,7 +28,8 @@
       "Bash(git -C * rev-parse *)",
       "Bash(git -C * blame *)",
       "Bash(git -C * remote *)",
-      "Edit"
+      "Edit",
+      "Write"
     ],
     "deny": [
       "Bash(forge script *)",
