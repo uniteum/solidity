@@ -38,6 +38,12 @@ separately.
 - Keep rules general — repo-specific rules belong in the consumer repo's own `.claude/` directory
 - The `paths` frontmatter controls which files trigger the rules
 
+### .claude/rules/crucible-tests.md
+
+- These rules apply to all `.sol` files under `test/` in every consumer repo
+- Covers shared test architecture: User pattern, no `vm.prank`, file naming, test style
+- Project-specific test rules belong in the consumer repo's `test/CLAUDE.md`
+
 ### .gitignore
 
 - Covers common patterns across Solidity, Node.js, frontend, and deployment artifacts

@@ -25,6 +25,7 @@ ln -s lib/crucible/.vscode .vscode
 mkdir -p .claude/rules
 ln -s ../lib/crucible/.claude/settings.json .claude/settings.json
 ln -s ../../lib/crucible/.claude/rules/solidity.md .claude/rules/solidity.md
+ln -s ../../lib/crucible/.claude/rules/crucible-tests.md .claude/rules/crucible-tests.md
 ```
 
 ### 3. Copy the .gitignore
@@ -69,7 +70,8 @@ repo/
 ├── .claude/
 │   ├── settings.json      → ../lib/crucible/.claude/settings.json
 │   └── rules/
-│       └── solidity.md    → ../../lib/crucible/.claude/rules/solidity.md
+│       ├── solidity.md    → ../../lib/crucible/.claude/rules/solidity.md
+│       └── crucible-tests.md → ../../lib/crucible/.claude/rules/crucible-tests.md
 ├── lib/
 │   ├── forge-std/
 │   └── crucible/            ← this submodule
@@ -91,6 +93,7 @@ submodule into consumer repos.
 | `.vscode/` | `.vscode` | Shared VS Code workspace settings |
 | `.claude/settings.json` | `.claude/settings.json` | Claude Code permissions (Foundry tool access) |
 | `.claude/rules/solidity.md` | `.claude/rules/solidity.md` | Claude Code rules for Solidity files |
+| `.claude/rules/crucible-tests.md` | `.claude/rules/crucible-tests.md` | Claude Code rules for test files |
 
 Files **not** symlinked:
 
